@@ -44,10 +44,10 @@ public class CatService {
     public void updateCat(int catId, Cat cat) {
         Cat existing = getCatById(catId);
         existing.setName(cat.getName());
+        existing.setDescription(cat.getDescription());
         existing.setBreed(cat.getBreed());
         existing.setAge(cat.getAge());
 
-        //Technically the 4 lines above are not necessary because the save method merges by default.
         catRepository.save(existing);
     }
 

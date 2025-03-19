@@ -22,7 +22,7 @@ public class CatController {
      * @return a list of Cats  objects.
      */
     @GetMapping("/all")
-    public Object getAllCatts() {
+    public Object getAllCats() {
         return new ResponseEntity<>(service.getAllCats(), HttpStatus.OK);
 
     }
@@ -37,13 +37,12 @@ public class CatController {
     @GetMapping("/{catId}")
     public Object getOneCat(@PathVariable int catId) {
         return new ResponseEntity<>(service.getCatById(catId), HttpStatus.OK);
-
     }
 
 
     /**
      * Get a list of cats with a name that contains the given string.
-     * http://localhost:8080/cats/name?search=alex
+     * http://localhost:8080/cats/name?search=neko
      *
      * @param search the search key
      * @return list of Cat objects matching the search key.
@@ -66,6 +65,14 @@ public class CatController {
         return new ResponseEntity<>(service.getCatsByBreed(breed), HttpStatus.OK);
     }
 
+    /**
+     * Get a list of old cats.
+     * http://localhost:8080/cats/old
+     */
+    @GetMapping("/old")
+    public Object getOldCats(@RequestParam(name = "age", defaultValue = "2.0") double age) {
+        return new ResponseEntity<>(service.getOldCats(age), HttpStatus.OK);
+    }
 
     /**
      * Create a new Cat entry.
@@ -83,7 +90,7 @@ public class CatController {
 
     /**
      * Update an existing Cat object.
-     * http://localhost:8080/cats/update/2 --data '{ "catID": 1, "name": "sampleUpdated", "description": "orange", "age": 3.0}'
+     * http://localhost:8080/cats/update/2 --data '{ "catID": 1, "name": "sampleUpdated", "description": "orange", "breed": "white", "age": 3.0}'
      *
      * @param catId the unique Cat Id.
      * @param cat   the new update Cat details.

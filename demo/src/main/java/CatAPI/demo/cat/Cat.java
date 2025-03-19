@@ -42,11 +42,11 @@ public class Cat {
     public Cat() {
     }
 
-    public int getStudentId() {
+    public int getCatId() {
         return catId;
     }
 
-    public void setStudentId(int catId) {
+    public void setCatId(int catId) {
         this.catId = catId;
     }
 

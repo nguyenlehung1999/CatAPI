@@ -10,7 +10,7 @@ import java.util.List;
 public interface CatRepository extends JpaRepository<Cat, Integer> {
     List<Cat> getCatByBreed(String breed);
 
-    @Query(value = "select * from cats c where c.age >= ?2", nativeQuery = true)
+    @Query(value = "select * from cats c where c.age >= ?1", nativeQuery = true)
     List<Cat> getOldCats(double age);
 
     @Query(value = "select * from cats c where c.name like %?1% ", nativeQuery = true)
