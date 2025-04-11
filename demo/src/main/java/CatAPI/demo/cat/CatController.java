@@ -3,13 +3,16 @@ package CatAPI.demo.cat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * CatAPI.demo.cat.CatController.java.
  * Includes all REST API endpoint mappings for the Cat object.
  */
-@RestController
+//RestController
+@Controller
 @RequestMapping("/cats")
 public class CatController {
     @Autowired
@@ -22,9 +25,10 @@ public class CatController {
      * @return a list of Cats  objects.
      */
     @GetMapping("/all")
-    public Object getAllCats() {
-        return new ResponseEntity<>(service.getAllCats(), HttpStatus.OK);
-
+    public Object getAllCats(Model model) {
+        model.addAttribute("catList", service.getAllCats());
+        model.addAttribute("title", "All Cats");
+        return "cat-list";
     }
 
     /**
@@ -35,8 +39,10 @@ public class CatController {
      * @return One Cat object.
      */
     @GetMapping("/{catId}")
-    public Object getOneCat(@PathVariable int catId) {
-        return new ResponseEntity<>(service.getCatById(catId), HttpStatus.OK);
+    public Object getOneCat(@PathVariable int catId, Model model) {
+        model.addAttribute("cat", service.getCatById(catId));
+        model.addAttribute("title", "Cat #: " + catId);
+        return "cat-details";
     }
 
 
@@ -48,9 +54,10 @@ public class CatController {
      * @return list of Cat objects matching the search key.
      */
     @GetMapping("/name")
-    public Object getCatsByName(@RequestParam(name = "search", defaultValue = "") String search) {
-        return new ResponseEntity<>(service.getCatsByName(search), HttpStatus.OK);
-
+    public Object getCatsByName(@RequestParam(name = "search", defaultValue = "") String search, Model model) {
+        model.addAttribute("catList", service.getCatsByName(search));
+        model.addAttribute("title", "Cats by Name: " + search);
+        return "cat-list";
     }
 
     /**
@@ -61,8 +68,10 @@ public class CatController {
      * @return A list of Cat objects matching the search key.
      */
     @GetMapping("/breed/{breed}")
-    public Object getCatsByBreed(@PathVariable String breed) {
-        return new ResponseEntity<>(service.getCatsByBreed(breed), HttpStatus.OK);
+    public Object getCatsByBreed(@PathVariable String breed, Model model) {
+        model.addAttribute("catList", service.getCatsByBreed(breed));
+        model.addAttribute("title", "Cats by breed: " + breed);
+        return "cat-list";
     }
 
     /**
@@ -75,6 +84,20 @@ public class CatController {
     }
 
     /**
+     * Show the view for a new Cat Form.
+     *
+     * @param model
+     * @return the form view
+     */
+    @GetMapping("/createForm")
+    public String showCreateForm(Model model) {
+        Cat cat = new Cat();
+        model.addAttribute("cat", cat);
+        model.addAttribute("title", "Create New Cat");
+        return "cat-create";
+    }
+
+    /**
      * Create a new Cat entry.
      * http://localhost:8080/cats/new --data '{  "name": "sample cat name", "description": "orange", "breed": "Tabby", "age": 2}'
      *
@@ -82,10 +105,12 @@ public class CatController {
      * @return the updated list of Cats.
      */
     @PostMapping("/new")
-    public Object addNewCat(@RequestBody Cat cat) {
+    public Object addNewCat(Cat cat) {
+        if (cat.getImgPath() != null && cat.getImgPath().trim().isEmpty()) {
+            cat.setImgPath(null);
+        }
         service.addNewCat(cat);
-        return new ResponseEntity<>(service.getAllCats(), HttpStatus.CREATED);
-
+        return "redirect:/cats/all";
     }
 
     /**
@@ -93,14 +118,29 @@ public class CatController {
      * http://localhost:8080/cats/update/2 --data '{ "catID": 1, "name": "sampleUpdated", "description": "orange", "breed": "white", "age": 3.0}'
      *
      * @param catId the unique Cat Id.
-     * @param cat   the new update Cat details.
      * @return the updated Cat object.
      */
-    @PutMapping("/update/{catId}")
-    public Object updateCat(@PathVariable int catId, @RequestBody Cat cat) {
-        service.updateCat(catId, cat);
-        return new ResponseEntity<>(service.getCatById(catId), HttpStatus.CREATED);
+    @GetMapping("/update/{catId}")
+    public Object updateCat(@PathVariable int catId, Model model) {
+        model.addAttribute("cat", service.getCatById(catId));
+        model.addAttribute("title", "Update Cat");
+        return "cat-update";
+    }
 
+    /**
+     * Update an existing Cat object.
+     * http://localhost:8080/cats/update/2
+     *
+     * We do not need the @RequestBody!
+     *
+     * @param catId the unique Student Id.
+     * @param cat   the new update Student details.
+     * @return the updated Student object.
+     */
+    @PostMapping("/update/{catId}")
+    public Object updateStudent(@PathVariable int catId, Cat cat) {
+        service.updateCat(catId, cat);
+        return "redirect:/cats/" + catId;
     }
 
     /**
@@ -110,9 +150,9 @@ public class CatController {
      * @param catId the unique Cat Id.
      * @return the updated list of Cat.
      */
-    @DeleteMapping("/delete/{catId}")
+    @GetMapping("/delete/{catId}")
     public Object deleteCatById(@PathVariable int catId) {
         service.deleteCatById(catId);
-        return new ResponseEntity<>(service.getAllCats(), HttpStatus.OK);
+        return "redirect:/cats/all";
     }
 }

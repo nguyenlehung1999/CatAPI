@@ -23,12 +23,17 @@ public class Cat {
     @Column(nullable = false)
     private double age;
 
-    public Cat(int catId, String name, String description, String breed, double age) {
+
+
+    private String imgPath;
+
+    public Cat(int catId, String name, String description, String breed, double age, String imgPath) {
         this.catId = catId;
         this.name = name;
         this.description = description;
         this.breed = breed;
         this.age = age;
+        this.imgPath = imgPath;
     }
 
     public Cat(String name, String description, String breed, double age) {
@@ -82,4 +87,7 @@ public class Cat {
         this.age = age;
     }
 
+    public String getImgPath() {return imgPath;}
+
+    public void setImgPath(String imgPath) {this.imgPath = imgPath;}
 }

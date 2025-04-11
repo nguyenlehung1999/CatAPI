@@ -47,6 +47,7 @@ public class CatService {
         existing.setDescription(cat.getDescription());
         existing.setBreed(cat.getBreed());
         existing.setAge(cat.getAge());
+        existing.setImgPath(cat.getImgPath());
 
         catRepository.save(existing);
     }
